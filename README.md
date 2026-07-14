@@ -118,4 +118,4 @@ New-AzResourceGroupDeployment `
 
 ## ライセンス
 
-社内利用を想定。公開時はライセンスを別途設定してください。
+本プロジェクトは [MIT ライセンス](LICENSE) の下で公開されています。
