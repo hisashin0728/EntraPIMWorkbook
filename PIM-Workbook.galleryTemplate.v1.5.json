@@ -9,9 +9,39 @@
       "name": "Title"
     },
     {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "7a1c9e20-4b6d-4f2a-9c3e-000000000010",
+            "version": "KqlParameterItem/1.0",
+            "name": "ShowVersionHistory",
+            "label": "版歴",
+            "type": 10,
+            "isRequired": true,
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false
+            },
+            "jsonData": "[{\"value\":\"no\",\"label\":\"非表示\",\"selected\":true},{\"value\":\"yes\",\"label\":\"表示\"}]"
+          }
+        ],
+        "style": "pills",
+        "queryType": 0,
+        "resourceType": "microsoft.resourcegraph/resources"
+      },
+      "name": "VersionHistoryToggle"
+    },
+    {
       "type": 1,
       "content": {
-        "json": "## 版歴\n\n| 版数 | 日付 | 変更内容 |\n|---|---|---|\n| 1.0 | 2026-06-23 | 初版作成（PIM 監査履歴の可視化） |\n| 1.1 | 2026-06-23 | GroupManagement 分析（円グラフ4種）を追加、監査履歴の絞り込み用パラメータ（ActivityDisplayName / ResourceName / Group / Result）を追加 |\n| 1.2 | 2026-07-14 | 監査履歴を Category 別に3つの表へ再設計（RoleManagement / GroupManagement / ResourceManagement）、列を日本語ラベル化 |\n| 1.3 | 2026-07-14 | Category を単一選択プルダウンに変更し、選択したカテゴリの表のみ表示 |\n| 1.4 | 2026-07-14 | request approved イベントに「承認対象ユーザー」列を追加し、承認者と承認対象ユーザーを区別して表示 |\n| 1.5 | 2026-07-14 | RoleManagement / ResourceManagement Analysis を追加、分析グラフを Category で切替表示 |"
+        "json": "## 版歴\n\n| 版数 | 日付 | 変更内容 |\n|---|---|---|\n| 1.0 | 2026-06-23 | 初版作成（PIM 監査履歴の可視化） |\n| 1.1 | 2026-06-23 | GroupManagement 分析（円グラフ4種）を追加、監査履歴の絞り込み用パラメータ（ActivityDisplayName / ResourceName / Group / Result）を追加 |\n| 1.2 | 2026-07-14 | 監査履歴を Category 別に3つの表へ再設計（RoleManagement / GroupManagement / ResourceManagement）、列を日本語ラベル化 |\n| 1.3 | 2026-07-14 | Category を単一選択プルダウンに変更し、選択したカテゴリの表のみ表示 |\n| 1.4 | 2026-07-14 | request approved イベントに「承認対象ユーザー」列を追加し、承認者と承認対象ユーザーを区別して表示 |\n| 1.5 | 2026-07-14 | RoleManagement / ResourceManagement Analysis を追加、分析グラフを Category で切替表示 |\n| 1.6 | 2026-07-22 | Subscription パラメータを追加し、Log Analytics ワークスペースを選択したサブスクリプション配下から選ぶ方式（ARG クエリ）へ変更 |\n| 1.6.1 | 2026-07-22 | Workspace パラメータの ARG 設定を修正（resourceType を microsoft.resourcegraph/resources に変更、resourceTypeFilter を削除）。サブスクリプション配下のワークスペースが列挙されない不具合を解消 |"
+      },
+      "conditionalVisibility": {
+        "parameterName": "ShowVersionHistory",
+        "comparison": "isEqualTo",
+        "value": "yes"
       },
       "name": "Revision History"
     },
@@ -21,6 +51,28 @@
         "version": "KqlParameterItem/1.0",
         "parameters": [
           {
+            "id": "5b3a7c10-1e2f-4d8a-9b01-000000000001",
+            "version": "KqlParameterItem/1.0",
+            "name": "Subscription",
+            "type": 6,
+            "isRequired": true,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::1",
+                "value::all"
+              ],
+              "includeAll": true,
+              "showDefault": false
+            },
+            "defaultValue": "value::all",
+            "timeContext": {
+              "durationMs": 86400000
+            }
+          },
+          {
             "id": "6d010c85-99e3-41fb-8f4b-232849c3db00",
             "version": "KqlParameterItem/1.0",
             "name": "Workspace",
@@ -29,13 +81,16 @@
             "multiSelect": true,
             "quote": "'",
             "delimiter": ",",
+            "query": "resources\n| where type =~ 'microsoft.operationalinsights/workspaces'\n| project value = id, label = name, selected = false, group = resourceGroup\n| order by label asc",
+            "crossComponentResources": [
+              "{Subscription}"
+            ],
             "typeSettings": {
-              "resourceTypeFilter": {
-                "microsoft.operationalinsights/workspaces": true
-              },
               "additionalResourceOptions": [],
               "showDefault": false
             },
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
             "timeContext": {
               "durationMs": 86400000
             },
